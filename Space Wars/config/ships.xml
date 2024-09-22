@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration>
+<configuration>
+    <parts>
+        <laser>
+            <name>Light Pulse Laser</name>
+            <integrity>60</integrity>
+            <weight>10</weight>
+            <rate>2</rate>
+            <accuracy>54.5</accuracy>
+            <damage>
+                <type>em</type>
+                <amount>25</amount>
+            </damage>
+            <batteryCost>15</batteryCost>
+        </laser>
+        <laser>
+            <name>Medium Blast Laser</name>
+            <integrity>130</integrity>
+            <weight>10</weight>
+            <rate>2</rate>
+            <accuracy>40.5</accuracy>
+            <damage>
+                <type>explosive</type>
+                <amount>50</amount>
+            </damage>
+            <batteryCost>30</batteryCost>
+        </laser>
+        <railgun>
+            <name>Small Heated Cannon</name>
+            <integrity>80</integrity>
+            <weight>15</weight>
+            <rate>1</rate>
+            <accuracy>45.9</accuracy>
+            <damage>
+                <type>thermal</type>
+                <amount>45</amount>
+            </damage>
+            <ammo>10</ammo>
+        </railgun>
+        <railgun>
+            <name>Medium Pierce Bolter</name>
+            <integrity>150</integrity>
+            <weight>30</weight>
+            <rate>1</rate>
+            <accuracy>35.9</accuracy>
+            <damage>
+                <type>kinetic</type>
+                <amount>85</amount>
+            </damage>
+            <ammo>5</ammo>
+        </railgun>
+        <shield>
+            <name>multispectral shield</name>
+            <integrity>100</integrity>
+            <weight>5.0</weight>
+            <regen>5</regen>
+            <resistances>
+                <em>0.0</em>
+                <thermal>22.3</thermal>
+                <kinetic>70.1</kinetic>
+                <explosive>53.2</explosive>
+            </resistances>
+        </shield>
+        <shield>
+            <name>crystal shield</name>
+            <integrity>300</integrity>
+            <weight>10.0</weight>
+            <regen>10</regen>
+            <resistances>
+                <em>10.0</em>
+                <thermal>42.1</thermal>
+                <kinetic>80.6</kinetic>
+                <explosive>53.2</explosive>
+            </resistances>
+        </shield>
+        <armor>
+            <name>caged armor</name>
+            <integrity>100</integrity>
+            <weight>100</weight>
+            <resistances>
+                <em>50.0</em>
+                <thermal>43.2</thermal>
+                <kinetic>10.67</kinetic>
+                <explosive>20.15</explosive>
+            </resistances>
+        </armor>
+        <armor>
+            <name>hardened armor</name>
+            <integrity>300</integrity>
+            <weight>300</weight>
+            <resistances>
+                <em>60.0</em>
+                <thermal>53.2</thermal>
+                <kinetic>30.1</kinetic>
+                <explosive>30.5</explosive>
+            </resistances>
+        </armor>
+        <sensor>
+            <name>scout sensor</name>
+            <integrity>60</integrity>
+            <weight>10.0</weight>
+            <accuracy>20.0</accuracy>
+        </sensor>
+        <sensor>
+            <name>battle sensor</name>
+            <integrity>130</integrity>
+            <weight>10.0</weight>
+            <accuracy>30.0</accuracy>
+        </sensor>
+        <sensor>
+            <name>cargo sensor</name>
+            <integrity>30</integrity>
+            <weight>10.0</weight>
+            <accuracy>10.0</accuracy>
+        </sensor>
+    </parts>
+    <ships>
+        <ship>
+            <name>Zoomer</name>
+            <baseIntegrity>50</baseIntegrity>
+            <speed>192.7</speed>
+            <battery>100</battery>
+            <batteryRegen>15</batteryRegen>
+            <components>
+                <laserName>Light Pulse Laser</laserName>
+                <laserName>Light Pulse Laser</laserName>
+                <railgunName>Small Heated Cannon</railgunName>
+                <shieldName>multispectral shield</shieldName>
+                <armorName>caged armor</armorName>
+                <sensorName>scout sensor</sensorName>
+            </components>
+        </ship>
+        <ship>
+            <name>UnicornBreath</name>
+            <baseIntegrity>200</baseIntegrity>
+            <speed>22.5</speed>
+            <battery>200</battery>
+            <batteryRegen>5</batteryRegen>
+            <components>
+                <laserName>Light Pulse Laser</laserName>
+                <laserName>Medium Blast Laser</laserName>
+                <laserName>Medium Blast Laser</laserName>
+                <railgunName>Small Heated Cannon</railgunName>
+                <railgunName>Medium Pierce Bolter</railgunName>
+                <shieldName>multispectral shield</shieldName>
+                <armorName>hardened armor</armorName>
+                <sensorName>battle sensor</sensorName>
+            </components>
+        </ship>
+        <ship>
+            <name>Titanic</name>
+            <baseIntegrity>100</baseIntegrity>
+            <speed>75</speed>
+            <battery>100</battery>
+            <batteryRegen>20</batteryRegen>
+            <components>
+                <railgunName>Small Heated Cannon</railgunName>
+                <railgunName>Medium Pierce Bolter</railgunName>
+                <railgunName>Medium Pierce Bolter</railgunName>
+                <shieldName>crystal shield</shieldName>
+                <sensorName>cargo sensor</sensorName>
+            </components>
+        </ship>
+    </ships>
+</configuration>
