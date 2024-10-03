@@ -14,14 +14,6 @@ public abstract class BattleUtil {
     private static boolean isBattleComplete;
     private static final int MAX_NUMBER_OF_TURNS = 20;
 
-    public static ShipComponent getLockedComponent() {
-        return lockedComponent;
-    }
-
-    public static void setLockedComponent(ShipComponent component) {
-        lockedComponent = component;
-    }
-
     public static int getMAX_NUMBER_OF_TURNS() {
         return MAX_NUMBER_OF_TURNS;
     }
