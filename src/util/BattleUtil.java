@@ -8,9 +8,17 @@ import java.util.*;
 public abstract class BattleUtil {
 
     public static int turnNum;
-    public static int weaponsFired;
     private static boolean isBattleComplete;
     private static final int MAX_NUMBER_OF_TURNS = 20;
+    private static ShipComponent lockedComponent;
+
+    public static ShipComponent getLockedComponent() {
+        return lockedComponent;
+    }
+
+    public static void setLockedComponent(ShipComponent component) {
+        lockedComponent = component;
+    }
 
     public static int getMAX_NUMBER_OF_TURNS() {
         return MAX_NUMBER_OF_TURNS;
@@ -28,22 +36,22 @@ public abstract class BattleUtil {
 
         while (!getIsBattleComplete() && turnNum <= getMAX_NUMBER_OF_TURNS()) {
 
-                System.out.println("Turn " + turnNum + " has begun!");
+            System.out.println("Turn " + turnNum + " has begun!");
 
-                if (!team1.getTeamShips().isEmpty() || !team2.getTeamShips().isEmpty()) {
-                    ArrayList<Ship> team1TurnOrder = generateShipReactions(team1.getTeamShips(), numGenerator);
-                    team1.setTeamShips(team1TurnOrder);
-                    ArrayList<Ship> team2TurnOrder = generateShipReactions(team2.getTeamShips(), numGenerator);
-                    team2.setTeamShips(team2TurnOrder);
+            if (!team1.getTeamShips().isEmpty() || !team2.getTeamShips().isEmpty()) {
+                ArrayList<Ship> team1TurnOrder = generateShipReactions(team1.getTeamShips(), numGenerator);
+                team1.setTeamShips(team1TurnOrder);
+                ArrayList<Ship> team2TurnOrder = generateShipReactions(team2.getTeamShips(), numGenerator);
+                team2.setTeamShips(team2TurnOrder);
 
-                    teamTurn(team1, team1TurnOrder, team2, numGenerator);
-                    teamTurn(team2, team2TurnOrder, team1, numGenerator);
-                    turnNum++;
-                }
-                else {
-                    setIsBattleComplete(true);
-                    break;
-                }
+                teamTurn(team1, team1TurnOrder, team2, numGenerator);
+                teamTurn(team2, team2TurnOrder, team1, numGenerator);
+                turnNum++;
+            }
+            else {
+                setIsBattleComplete(true);
+                break;
+            }
         }
     }
 
@@ -160,7 +168,7 @@ public abstract class BattleUtil {
         for (int i = 0; i < comps.size(); i++) {
             component = comps.get(i);
 
-            if (component instanceof Weapon) {
+            if (component instanceof Weapon && !component.isComponentDestroyed()) {
 
                 weapons.add((Weapon) component);
 
@@ -200,189 +208,187 @@ public abstract class BattleUtil {
 
     public static void fireAllWeapons(Team attackingTeam, Ship attacker, ArrayList<Weapon> attackerWeapons, Team defendingTeam, Ship shipBeingAttacked, Random numGenerator) {
 
-            if (!getIsBattleComplete()) {
+        if (!getIsBattleComplete()) {
 
-                ArrayList<ShipComponent> attackerComponents = attacker.getComponents();
-                ArrayList<ShipComponent> defenderComponents = shipBeingAttacked.getComponents();
-                attacker.setWeight(attackerComponents);
-                shipBeingAttacked.setWeight(defenderComponents);
-                ArrayList<Defence> defences = searchForDefences(defenderComponents);
+            ArrayList<ShipComponent> attackerComponents = attacker.getComponents();
+            ArrayList<ShipComponent> defenderComponents = shipBeingAttacked.getComponents();
+            attacker.setWeight(attackerComponents);
+            shipBeingAttacked.setWeight(defenderComponents);
+            ArrayList<Defence> defences = searchForDefences(defenderComponents);
 
-                for (int weaponAtIndex = 0; weaponAtIndex < attackerWeapons.size(); weaponAtIndex++) {
-                    Weapon weapon = attackerWeapons.get(weaponAtIndex);
-                    double accuracy = weapon.getAccuracy();
+            for (int weaponAtIndex = 0; weaponAtIndex < attackerWeapons.size(); weaponAtIndex++) {
+                Weapon weapon = attackerWeapons.get(weaponAtIndex);
+                double accuracy = weapon.getAccuracy();
 
                 for (int fired = 0; fired < weapon.getFireRate(); fired++) {
-                    if (!getIsBattleComplete()) {
-                        if (!(weapon.isComponentDestroyed())) {
-                            int damageRemaining = weapon.getDamage();
-                            double accuracyBoost = 0.0;
-                            ShipComponent partHit;
 
-                            Sensor sensor = searchForSensor(attackerComponents);
+                    int damageRemaining = weapon.getDamage();
+                    double accuracyBoost = 0.0;
+                    ShipComponent partHit;
 
-                            if (sensor != null && !sensor.isComponentDestroyed()) {
-                                accuracyBoost = sensor.getAccuracyBoost();
+                    Sensor sensor = searchForSensor(attackerComponents);
 
-                            }
+                    if (sensor != null && !sensor.isComponentDestroyed()) {
+                        accuracyBoost = sensor.getAccuracyBoost();
 
-                            if (weapon instanceof Laser) {
+                    }
 
-                                int cost = ((Laser) weapon).getBatteryCost();
+                    if (weapon instanceof Laser) {
 
-                                if (cost <= attacker.getCurrBattery() && !weapon.isComponentDestroyed()) {
+                        int cost = ((Laser) weapon).getBatteryCost();
 
-                                    int drainBattery = (attacker.getCurrBattery() - cost);
-                                    attacker.setCurrBattery(drainBattery);
+                        if (cost <= attacker.getCurrBattery() && !weapon.isComponentDestroyed()) {
 
-                                } else {
+                            int drainBattery = (attacker.getCurrBattery() - cost);
+                            attacker.setCurrBattery(drainBattery);
 
-                                    break;
-
-                                }
-                            } else if (weapon instanceof Railgun) {
-
-                                int ammo = ((Railgun) weapon).getAmmo();
-
-                                if (ammo > 0 && !weapon.isComponentDestroyed()) {
-
-                                    ammo--;
-                                    ((Railgun) weapon).setAmmo(ammo);
-
-                                } else {
-
-                                    break;
-
-                                }
-                            }
-                            weaponsFired++;
-                            System.out.println("\t\t" + attackingTeam.getTeamName() + "’s " + attacker.getName() + " fires its " + attackerWeapons.get(weaponAtIndex).getName() + " at " + defendingTeam.getTeamName() + "’s " + shipBeingAttacked.getName() + " …");
-                            double random = rollOneToHundred(numGenerator);
-                            double random2 = rollOneToHundred(numGenerator);
-
-                            if (isAttackDodged(shipBeingAttacked, random)) {
-                                System.out.println("\t\t\tbut the " + defendingTeam.getTeamName() + "’s " + shipBeingAttacked.getName() + " deftly avoids the blow.");
-                                break;
-                            }
-                            //The weapon hits if a random floating-point number from 0 to 100 (exclusive) is lower than its accuracy plus the ship’s sensors accuracy
-                            else if (random2 < (accuracy + accuracyBoost)) {
-
-                                ShipComponent randomComponent;
-                                Shield shield = new Shield();
-                                Armor armor = new Armor();
-
-                                if (isCriticalStrike(numGenerator)) {
-
-                                    //On a critical strike, a random component of the hit ship takes structural integrity damage, without regard to any defensive resistances of the hit ship.
-                                    //Hit a random component with random index from the xml order
-                                    damageRemaining = damageRemaining * 2;
-                                    randomComponent = randomComponentHit(defenderComponents, damageRemaining, numGenerator);
-                                    partHit = randomComponent;
-                                    if (partHit == null) {
-                                        String damageType = getDamageType(weapon);
-                                        hullHit(shipBeingAttacked, damageType, damageRemaining, true);
-                                    }
-                                    partHit.setCurrIntegrity(partHit.getCurrIntegrity() - damageRemaining);
-                                    hitOutput(shipBeingAttacked, partHit.getName(), getDamageType(weapon), damageRemaining, true);
-
-                                    if (partHit.isComponentDestroyed()) {
-
-                                        if (partHit instanceof Shield) {
-                                            System.out.println("\t\t\tThe " + partHit.getName() + " dissipates.");
-                                        } else {
-                                            System.out.println("\t\t\tThe " + partHit.getName() + " is destroyed.");
-                                            shipBeingAttacked.getComponents();
-                                        }
-                                        if (shipBeingAttacked.isDestroyed()) {
-
-                                            System.out.println("\t" + defendingTeam.getTeamName() + "’s " + shipBeingAttacked.getName() + " EXPLODES in a shower of sparks and fire, lost forever to the inky void!");
-                                            ArrayList<Ship> remainingShips = defendingTeam.getTeamShips();
-                                            remainingShips.remove(shipBeingAttacked);
-                                            defendingTeam.setTeamShips(remainingShips);
-
-                                            if (defendingTeam.getTeamShips().isEmpty()) {
-                                                setIsBattleComplete(true);
-                                                break;
-                                            }
-
-                                        }
-
-                                    }
-
-                                }
-                                //Regular Hit
-                                else {
-                                    for (Defence component : defences) {
-
-                                        if (component instanceof Shield) {
-                                            shield = (Shield) component;
-
-                                            if (!shield.getPassThrough()) {
-
-                                                int actualDamage = getActualDamage(getDamageType(weapon), damageRemaining, shield);
-                                                damageRemaining = actualDamage - shield.getCurrIntegrity();
-
-                                                if (actualDamage >= shield.getCurrIntegrity()) {
-                                                    actualDamage = shield.getCurrIntegrity();
-                                                    shield.setCurrIntegrity(0);
-                                                    shield.setPassThrough(true);
-                                                } else {
-                                                    shield.setCurrIntegrity(shield.getCurrIntegrity() - actualDamage);
-                                                    damageRemaining = 0;
-                                                }
-                                                hitOutput(shipBeingAttacked, shield.getName(), getDamageType(weapon), actualDamage, false);
-                                            }
-                                        }
-                                        if (damageRemaining > 0) {
-
-                                            if (component instanceof Armor) {
-
-                                                armor = (Armor) component;
-
-                                                if (!armor.isComponentDestroyed()) {
-                                                    int actualDamage = getActualDamage(getDamageType(weapon), damageRemaining, armor);
-                                                    damageRemaining = actualDamage - armor.getCurrIntegrity();
-                                                    if (actualDamage >= armor.getCurrIntegrity()) {
-                                                        actualDamage = armor.getCurrIntegrity();
-                                                        armor.setCurrIntegrity(0);
-                                                        System.out.println("\t\t\tThe " + armor.getName() + " is destroyed.");
-                                                        break;
-                                                    } else {
-                                                        armor.setCurrIntegrity(armor.getCurrIntegrity() - actualDamage);
-                                                        damageRemaining = 0;
-                                                    }
-                                                    hitOutput(shipBeingAttacked, armor.getName(), getDamageType(weapon), actualDamage, false);
-                                                }
-                                            }
-                                        }
-                                    }
-                                    if (defences.isEmpty() || (shield.getPassThrough() && armor.isComponentDestroyed())) {
-                                        if (damageRemaining > 0) {
-
-                                            String damageType = getDamageType(weapon);
-                                            hullHit(shipBeingAttacked, damageType, damageRemaining, false);
-
-                                            if (shipBeingAttacked.isDestroyed()) {
-
-                                                System.out.println("\t" + defendingTeam.getTeamName() + "’s " + shipBeingAttacked.getName() + " EXPLODES in a shower of sparks and fire, lost forever to the inky void!");
-                                                ArrayList<Ship> remainingShips = defendingTeam.getTeamShips();
-                                                remainingShips.remove(shipBeingAttacked);
-                                                defendingTeam.setTeamShips(remainingShips);
-
-                                                if (getIsBattleComplete()) {
-                                                    setIsBattleComplete(true);
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            } else {
-                                System.out.println("\t\t\tbut the " + weapon.getName() + " hits nothing but vacuum.");
-                            }
                         } else {
+
                             break;
+
                         }
+                    }
+                    else if (weapon instanceof Railgun) {
+
+                        int ammo = ((Railgun) weapon).getAmmo();
+
+                        if (ammo > 0 && !weapon.isComponentDestroyed()) {
+
+                            ammo--;
+                            ((Railgun) weapon).setAmmo(ammo);
+
+                        } else {
+
+                            break;
+
+                        }
+                    }
+                    System.out.println("\t\t" + attackingTeam.getTeamName() + "’s " + attacker.getName() + " fires its " + attackerWeapons.get(weaponAtIndex).getName() + " at " + defendingTeam.getTeamName() + "’s " + shipBeingAttacked.getName() + " …");
+                    double random = rollOneToHundred(numGenerator);
+                    double random2 = rollOneToHundred(numGenerator);
+
+                    if (isAttackDodged(shipBeingAttacked, random)) {
+                        System.out.println("\t\t\tbut the " + defendingTeam.getTeamName() + "’s " + shipBeingAttacked.getName() + " deftly avoids the blow.");
+//                        break; //There seems to be an issue whenever this is removed
+                    }
+                    //The weapon hits if a random floating-point number from 0 to 100 (exclusive) is lower than its accuracy plus the ship’s sensors accuracy
+                    else if (random2 < (accuracy + accuracyBoost)) {
+
+                        ShipComponent randomComponent;
+                        Shield shield = new Shield();
+                        Armor armor = new Armor();
+
+                        if (isCriticalStrike(numGenerator)) {
+
+                            //On a critical strike, a random component of the hit ship takes structural integrity damage, without regard to any defensive resistances of the hit ship.
+                            //Hit a random component with random index from the xml order
+                            damageRemaining = damageRemaining * 2;
+                            randomComponent = randomComponentHit(defenderComponents, damageRemaining, numGenerator);
+                            partHit = randomComponent;
+                            if (partHit == null) {
+                                String damageType = getDamageType(weapon);
+                                hullHit(shipBeingAttacked, damageType, damageRemaining, true);
+                            }
+                            partHit.setCurrIntegrity(partHit.getCurrIntegrity() - damageRemaining);
+                            hitOutput(shipBeingAttacked, partHit.getName(), getDamageType(weapon), damageRemaining, true);
+
+                            if (partHit.isComponentDestroyed()) {
+
+                                if (partHit instanceof Shield) {
+                                    System.out.println("\t\t\tThe " + partHit.getName() + " dissipates.");
+                                }
+                                else {
+                                    System.out.println("\t\t\tThe " + partHit.getName() + " is destroyed.");
+                                    shipBeingAttacked.getComponents();
+                                }
+                                if (shipBeingAttacked.isDestroyed()) {
+
+                                    System.out.println("\t" + defendingTeam.getTeamName() + "’s " + shipBeingAttacked.getName() + " EXPLODES in a shower of sparks and fire, lost forever to the inky void!");
+                                    ArrayList<Ship> remainingShips = defendingTeam.getTeamShips();
+                                    remainingShips.remove(shipBeingAttacked);
+                                    defendingTeam.setTeamShips(remainingShips);
+
+                                    if (defendingTeam.getTeamShips().isEmpty()) {
+                                        setIsBattleComplete(true);
+                                        break;
+                                    }
+
+                                }
+
+                            }
+
+                        }
+                        //Regular Hit
+                        else {
+                            for (Defence component:defences) {
+
+                                if (component instanceof Shield) {
+                                    shield = (Shield) component;
+
+                                    if (!shield.getPassThrough()) {
+
+                                        int actualDamage = getActualDamage(getDamageType(weapon), damageRemaining, shield);
+                                        damageRemaining = actualDamage - shield.getCurrIntegrity();
+
+                                        if (actualDamage >= shield.getCurrIntegrity()) {
+                                            actualDamage = shield.getCurrIntegrity();
+                                            shield.setCurrIntegrity(0);
+                                            shield.setPassThrough(true);
+                                        }
+                                        else {
+                                            shield.setCurrIntegrity(shield.getCurrIntegrity() - actualDamage);
+                                            damageRemaining = 0;
+                                        }
+                                        hitOutput(shipBeingAttacked, shield.getName(), getDamageType(weapon), actualDamage, false);
+                                    }
+                                }
+                                if (damageRemaining > 0) {
+
+                                    if (component instanceof Armor) {
+
+                                        armor = (Armor) component;
+
+                                        if (!armor.isComponentDestroyed()) {
+                                            int actualDamage = getActualDamage(getDamageType(weapon), damageRemaining, armor);
+                                            damageRemaining = actualDamage - armor.getCurrIntegrity();
+                                            if (actualDamage >= armor.getCurrIntegrity()) {
+                                                actualDamage = armor.getCurrIntegrity();
+                                                armor.setCurrIntegrity(0);
+                                                System.out.println("\t\t\tThe " + armor.getName() + " is destroyed.");
+                                            }
+                                            else {
+                                                armor.setCurrIntegrity(armor.getCurrIntegrity()-actualDamage);
+                                                damageRemaining = 0;
+                                            }
+                                            hitOutput(shipBeingAttacked, armor.getName(), getDamageType(weapon), actualDamage, false);
+                                        }
+                                    }
+                                }
+                            }
+                            if (defences.isEmpty() || (shield.getPassThrough() && armor.isComponentDestroyed())) {
+                                if (damageRemaining > 0) {
+
+                                    String damageType = getDamageType(weapon);
+                                    hullHit(shipBeingAttacked, damageType, damageRemaining, false);
+
+                                    if (shipBeingAttacked.isDestroyed()) {
+
+                                        System.out.println("\t" + defendingTeam.getTeamName() + "’s " + shipBeingAttacked.getName() + " EXPLODES in a shower of sparks and fire, lost forever to the inky void!");
+                                        ArrayList<Ship> remainingShips = defendingTeam.getTeamShips();
+                                        remainingShips.remove(shipBeingAttacked);
+                                        defendingTeam.setTeamShips(remainingShips);
+
+                                        if (getIsBattleComplete()) {
+                                            setIsBattleComplete(true);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        System.out.println("\t\t\tbut the " + weapon.getName() + " hits nothing but vacuum.");
                     }
                 }
             }
@@ -416,11 +422,19 @@ public abstract class BattleUtil {
     }
 
     public static ShipComponent randomComponentHit(ArrayList<ShipComponent> components, int damageToDefence, Random numGenerator) {
+        ArrayList<ShipComponent> remainingComponents = components;
+
         if (!components.isEmpty()) {
-            int randomIndex = (int) numGenerator.nextDouble(0,components.size());
-            return components.get(randomIndex);
+            int randomIndex = numGenerator.nextInt(0,remainingComponents.size());
+            ShipComponent componentDamaged = components.get(randomIndex);
+            if (componentDamaged.isComponentDestroyed()) {
+                remainingComponents.remove(componentDamaged);
+            }
+            if (getLockedComponent() == null || componentDamaged.isComponentDestroyed()) {
+                setLockedComponent(componentDamaged);
+            }
         }
-        return null;
+        return lockedComponent;
     }
 
     public static void hitOutput(Ship shipBeingAttacked, String whatHit, String damageType, int damageRemaining, boolean isCritical) {
