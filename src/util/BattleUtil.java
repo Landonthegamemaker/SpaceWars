@@ -4,8 +4,6 @@ import entity.Ship;
 import entity.Team;
 
 import java.util.*;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
 
 public abstract class BattleUtil {
 
