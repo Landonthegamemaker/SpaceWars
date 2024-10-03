@@ -171,7 +171,7 @@ public abstract class BattleUtil {
         for (int i = 0; i < comps.size(); i++) {
             component = comps.get(i);
 
-            if (component instanceof Weapon && !component.isComponentDestroyed()) {
+            if (component instanceof Weapon) {
 
                 weapons.add((Weapon) component);
 
