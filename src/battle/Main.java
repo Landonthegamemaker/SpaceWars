@@ -39,7 +39,6 @@ public class Main {
                 Ship ship = new Ship(shipName);
                 team1Ships.add(ship);
                 ship.setName(ship.getName() + " - " + team1Ships.size());
-
         }
 
         //Keyboard input for entity.Team 2 Ships
@@ -86,7 +85,6 @@ public class Main {
                     if (getIsBattleComplete()) {
                         break;
                     }
-
             }
 
             if (team2.getTeamShips().isEmpty()) {

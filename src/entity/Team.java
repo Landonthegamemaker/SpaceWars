@@ -11,6 +11,14 @@ public class Team {
     private ArrayList<Ship> teamShips;
     private ArrayList<Ship> teamTurnOrder;
 
+    public ArrayList<Ship> getTeamTurnOrder() {
+        return teamTurnOrder;
+    }
+
+    public void setTeamTurnOrder(ArrayList<Ship> teamTurnOrder) {
+        this.teamTurnOrder = teamTurnOrder;
+    }
+
     public void setTeamName(String teamName) {
         this.teamName = teamName;
     }

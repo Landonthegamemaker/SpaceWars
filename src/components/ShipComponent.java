@@ -4,6 +4,7 @@ public class ShipComponent {
     private String name;
     private int maxIntegrity;
     private int currIntegrity;
+    private boolean isDestroyed;
     private double weight;
 
     public String getName() {
@@ -43,14 +44,8 @@ public class ShipComponent {
         this.name = name;
     }
 
-    public boolean isComponentDestroyed()  {
-
-        if (getCurrIntegrity() <= 0) {
-            setCurrIntegrity(0);
-            return true;
-        }
-        return false;
-    }
+    public boolean getisDestroyed() {return isDestroyed;}
+    public void setisDestroyed(boolean isDestroyed) {this.isDestroyed = isDestroyed;}
 
     @Override
     public String toString() {

@@ -25,11 +25,18 @@ public class Ship implements ShipConstructionUtil {
     private boolean isDestroyed;
     private double weight;
     private ArrayList<ShipComponent> components;
+    private ArrayList<Weapon> weapons;
 
+    public ArrayList<Weapon> getWeapons() {
+        return weapons;
+    }
+
+    public void setWeapons(ArrayList<Weapon> weapons) {
+        this.weapons = weapons;
+    }
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -85,12 +92,22 @@ public class Ship implements ShipConstructionUtil {
     public ArrayList<ShipComponent> getComponents() {
         return components;
     }
-
     public void setComponents(ArrayList<ShipComponent> components) {
         this.components = components;
     }
     public double getWeight() {return weight;}
-
+    public ArrayList<Weapon> gatherWeapons(ArrayList<ShipComponent> comps) {
+        ArrayList<Weapon> weapons = new ArrayList<>();
+        for(ShipComponent component: comps) {
+            if (component instanceof Weapon) {
+                if (!component.getisDestroyed()) {
+                    weapons.add((Weapon) component);
+                }
+            }
+        }
+        setWeapons(weapons);
+        return weapons;
+    }
     public void setWeight(ArrayList<ShipComponent> components) {
         double weight = 0;
         for (ShipComponent component:components) {
@@ -98,7 +115,6 @@ public class Ship implements ShipConstructionUtil {
         }
         this.weight = weight;
     }
-
     public Ship(String name) {
         this.name = name;
         parseXML();
