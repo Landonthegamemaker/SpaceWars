@@ -1,5 +1,4 @@
 package battle;
-
 import components.Weapon;
 import entity.Team;
 import entity.Ship;
@@ -12,7 +11,6 @@ import java.util.ArrayList;
 import java.util.stream.DoubleStream;
 
 public class Main {
-
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
         System.out.println("Choose a random seed for the battle:");
@@ -23,44 +21,13 @@ public class Main {
         System.out.println("Please provide a name for the second team:");
         String team2Name = scan.nextLine();
 
-        //Keyboard input for entity.Team 1 Ships
-        ArrayList<Ship> team1Ships = new ArrayList<>();
+        Team team1 = new Team(team1Name);
         System.out.println("Type in the names of the ships on the first team and then a q:");
+        ArrayList<Ship> team1Ships = team1.scanShips(team1, scan);
 
-        String shipName = "";
-
-        while (!(shipName.equals("q"))) {
-
-            shipName = scan.nextLine();
-
-            if (shipName.equals("q")) {
-                break;
-            }
-                Ship ship = new Ship(shipName);
-                team1Ships.add(ship);
-                ship.setName(ship.getName() + " - " + team1Ships.size());
-        }
-
-        //Keyboard input for entity.Team 2 Ships
-        ArrayList<Ship> team2Ships = new ArrayList<>();
-
+        Team team2 = new Team(team2Name);
         System.out.println("Type in the names of the ships on the second team and then a q:");
-
-        shipName = "";
-
-        while (!(shipName.equals("q"))) {
-
-            shipName = scan.nextLine();
-
-            if (shipName.equals("q")) {
-                break;
-            }
-
-            Ship ship = new Ship(shipName);
-            team2Ships.add(ship);
-            ship.setName(ship.getName() + " - " + team2Ships.size());
-
-        }
+        ArrayList<Ship> team2Ships = team2.scanShips(team2, scan);
 
             System.out.println("Are you ready for battle? (Y/N)");
             String output = scan.nextLine();
@@ -70,9 +37,7 @@ public class Main {
             System.out.println("Prepare for battle!");
 
             Random numGenerator = new Random(seed);
-            Team team1 = new Team(team1Name);
             team1.setTeamShips(team1Ships);
-            Team team2 = new Team(team2Name);
             team2.setTeamShips(team2Ships);
 
             setIsBattleComplete(false);
@@ -80,25 +45,23 @@ public class Main {
             turnNum = 1;
 
             while (turnNum <= getMAX_NUMBER_OF_TURNS()) {
-                    battle(team1, team2, numGenerator);
-                    
-                    if (getIsBattleComplete()) {
-                        break;
-                    }
+                battle(team1, team2, numGenerator);
+
+
+                if (getIsBattleComplete()) {
+                    break;
+                }
             }
 
             if (team2.getTeamShips().isEmpty()) {
                 System.out.println(team1.getTeamName() + " has won the battle. " + team2.getTeamName() + " suffers ignominious defeat.");
             }
-
             else if (team1.getTeamShips().isEmpty()) {
                 System.out.println(team2.getTeamName() + " has won the battle. " + team1.getTeamName() + " suffers ignominious defeat.");
             }
-
             else {
                 System.out.println("Exhausted from battle, all ships flee seeking repairs.");
             }
-
         }
     }
 }

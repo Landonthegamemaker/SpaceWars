@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Ship implements ShipConstructionUtil {
 
@@ -24,89 +25,53 @@ public class Ship implements ShipConstructionUtil {
     private double dodgeChance;
     private boolean isDestroyed;
     private double weight;
+    private String teamName;
+    private Team team;
     private ArrayList<ShipComponent> components;
     private ArrayList<Weapon> weapons;
 
-    public ArrayList<Weapon> getWeapons() {
-        return weapons;
-    }
+    public String getTeamName() {return teamName;}
+    public void setTeamName(String team) {this.teamName = team;}
 
-    public void setWeapons(ArrayList<Weapon> weapons) {
-        this.weapons = weapons;
+    public Team getTeam() {
+        return team;
     }
-    public String getName() {
-        return name;
+    public void setTeam(Team teamNum) {
+        this.team = teamNum;
     }
-    public void setName(String name) {
-        this.name = name;
-    }
-    public boolean isDestroyed() {
-        return isDestroyed;
-    }
-    public void setDestroyed(boolean destroyed) {
-        isDestroyed = destroyed;
-    }
-    public int getBaseIntegrity() {
-        return baseIntegrity;
-    }
-    public void setBaseIntegrity(int baseIntegrity) {
-        this.baseIntegrity = baseIntegrity;
-    }
-    public double getSpeed() {
-        return speed;
-    }
-    public void setSpeed(double speed) {
-        this.speed = speed;
-    }
-    public int getMaxBattery() {
-        return maxBattery;
-    }
-    public void setMaxBattery(int maxBattery) {
-        this.maxBattery = maxBattery;
-    }
-    public int getCurrBattery() {
-        return currBattery;
-    }
-    public void setCurrBattery(int currBattery) {
-        this.currBattery = currBattery;
-    }
-    public int getBatteryRegen() {
-        return batteryRegen;
-    }
-    public void setBatteryRegen(int batteryRegen) {
-        this.batteryRegen = batteryRegen;
-    }
-    public double getReaction() {
-        return reaction;
-    }
-    public void setReaction(double reaction) {
-        this.reaction = reaction;
-    }
-    public double getDodgeChance() {
-        return dodgeChance;
-    }
-    public void setDodgeChance(double dodgeChance) {
-        this.dodgeChance = dodgeChance;
-    }
-
-    public ArrayList<ShipComponent> getComponents() {
-        return components;
-    }
-    public void setComponents(ArrayList<ShipComponent> components) {
-        this.components = components;
-    }
+    public ArrayList<Weapon> getWeapons() {return weapons;}
+    public void setWeapons(ArrayList<Weapon> weapons) {this.weapons = weapons;}
+    public String getName() {return name;}
+    public void setName(String name) {this.name = name;}
+    public boolean isDestroyed() {return isDestroyed;}
+    public void setDestroyed(boolean destroyed) {isDestroyed = destroyed;}
+    public int getBaseIntegrity() {return baseIntegrity;}
+    public void setBaseIntegrity(int baseIntegrity) {this.baseIntegrity = baseIntegrity;}
+    public double getSpeed() {return speed;}
+    public void setSpeed(double speed) {this.speed = speed;}
+    public int getMaxBattery() {return maxBattery;}
+    public void setMaxBattery(int maxBattery) {this.maxBattery = maxBattery;}
+    public int getCurrBattery() {return currBattery;}
+    public void setCurrBattery(int currBattery) {this.currBattery = currBattery;}
+    public int getBatteryRegen() {return batteryRegen;}
+    public void setBatteryRegen(int batteryRegen) {this.batteryRegen = batteryRegen;}
+    public double getReaction() {return reaction;}
+    public void setReaction(double reaction) {this.reaction = reaction;}
+    public double getDodgeChance() {return dodgeChance;}
+    public void setDodgeChance(double dodgeChance) {this.dodgeChance = dodgeChance;}
+    public ArrayList<ShipComponent> getComponents() {return components;}
+    public void setComponents(ArrayList<ShipComponent> components) {this.components = components;}
     public double getWeight() {return weight;}
-    public ArrayList<Weapon> gatherWeapons(ArrayList<ShipComponent> comps) {
-        ArrayList<Weapon> weapons = new ArrayList<>();
-        for(ShipComponent component: comps) {
-            if (component instanceof Weapon) {
-                if (!component.getisDestroyed()) {
-                    weapons.add((Weapon) component);
-                }
+    public void sortWeapons(ArrayList<ShipComponent> comps) {
+        ArrayList<Weapon>workingWeapons = new ArrayList<>();
+        for (ShipComponent comp: comps)
+        {
+            if (comp instanceof Weapon && !comp.getisDestroyed())
+            {
+                workingWeapons.add((Weapon) comp);
             }
         }
-        setWeapons(weapons);
-        return weapons;
+        setWeapons(workingWeapons);
     }
     public void setWeight(ArrayList<ShipComponent> components) {
         double weight = 0;
@@ -119,7 +84,6 @@ public class Ship implements ShipConstructionUtil {
         this.name = name;
         parseXML();
     }
-
     public void parseXML() {
     Document xmlData = XMLUtil.injestXML();
     int NumAvalibleShips = xmlData.getElementsByTagName("ship").getLength();
@@ -367,7 +331,6 @@ public class Ship implements ShipConstructionUtil {
         }
     }
     }
-
     @Override
     public int convertToInt (String data){
         return Integer.parseInt(data);
