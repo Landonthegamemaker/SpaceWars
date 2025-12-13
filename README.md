@@ -1,1 +1,1 @@
-My first Data Structures and Algorithms lab containing a text-based game that simulates battles between 2 teams of spaceships. It was classified by Professor Peterson as an intermediate-professional project.
+My first Data Structures and Algorithms lab, containing a text-based game that simulates battles between 2 teams of spaceships. It was classified by Professor Peterson as an intermediate-professional project. I ended up getting a 95% on it.
